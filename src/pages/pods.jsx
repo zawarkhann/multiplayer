@@ -713,6 +713,7 @@ const Pods = (children) => {
     url: children.podData.podSettingsGlobal.podGlbUrl, // any name you like
     // url: 'public/models/model.glb', // any name you like
   });
+  //////
 
   const initializeGame = async () => {
     try {
