@@ -1,0 +1,18 @@
+/* avatar-scrollbar.css */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #2d2e2e;
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #9356ff;
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #b583ff;
+}

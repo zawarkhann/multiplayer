@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+}
+
+.messages {
+  border: 1px solid #ccc;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 10px;
+  padding: 10px;
+  font-family: monospace;
+}
+
+button {
+  margin-left: 10px;
+}

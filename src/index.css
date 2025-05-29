@@ -1,0 +1,87 @@
+@import 'tailwindcss';
+
+/* styles.css or global.css */
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #b054ff; /* the purple from preview */
+  border-radius: 9999px;
+}
+.custom-range-slider {
+  /* reset */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 4px;
+  background: #1f1f1f; /* fallback for very old browsers */
+  cursor: pointer;
+}
+.custom-range-slider::-webkit-slider-thumb {
+  margin-top: -4px;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: white; /* Purple color matching your button */
+  cursor: pointer;
+  border: none;
+}
+
+/* WEBKIT / CHROME / EDGE (Chromium) */
+.custom-range-slider::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 4px;
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    /* white from start…          */ #ffffff var(--range-progress, 0%),
+    /* …up to thumb position      */ #1f1f1f var(--range-progress, 0%),
+    /* dark from thumb…           */ #1f1f1f 100% /* …to the end                */
+  );
+}
+
+/* FIREFOX */
+.custom-range-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #1f1f1f; /* unfilled part */
+}
+.custom-range-slider::-moz-range-progress {
+  height: 8px;
+  border-radius: 4px;
+  background: #ffffff; /* filled part   */
+}
+
+/* THUMB (same for both engines) */
+.custom-range-slider::-webkit-slider-thumb,
+.custom-range-slider::-moz-range-thumb {
+  appearance: none; /* reset */
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff; /* white thumb */
+  border: none;
+  margin-top: -4px; /* centre on track */
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.custom-range-slider:focus::-webkit-slider-thumb,
+.custom-range-slider:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.25); /* glow when focused */
+}
+
+/* index.css */
+.backdrop-blur-extra-light {
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(1px);
+  background-color: rgba(0, 0, 0, 0.05); /* optional: light dark overlay */
+}
