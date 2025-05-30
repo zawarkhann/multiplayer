@@ -46,7 +46,7 @@ function AppRouter() {
     if (!isHomeRoute) return;
 
     const eventId = 21692442212;
-    const postId = 163521764;
+    const postId = 667274596;
     userId = searchParams.get('userId');
 
     if (!userId) return;

@@ -20,6 +20,7 @@ import Music from '../components/Music.jsx';
 import EndEventPrompt from '../components/endevent.jsx';
 import FullscreenToggle from '../components/FullScreen.jsx';
 import { SetCubeMapDds } from '../components/floor-cubemap.js';
+import LoadingScreen from '../components/LoadingScreen.jsx';
 
 const Pods = (children) => {
   const [hostAvatar, setHostAvatar] = useState('');
@@ -29,6 +30,9 @@ const Pods = (children) => {
   const [isHost, setIsHost] = useState(false);
   const [allRobots, setAllRobots] = useState([]);
   const [robotsLoading, setRobotsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const loadedAssets = useRef(0);
+  const totalAssetsToLoad = 1;
 
   useEffect(() => {
     const fetchAllRobots = async () => {
@@ -91,329 +95,6 @@ const Pods = (children) => {
   localStorage.setItem('postData', JSON.stringify(children.postAssets));
   window.remotePlayersRef = useRef({});
 
-  // function createRemotePlayer(app, peerId) {
-  //   console.log('Whole Peer:', peerId);
-
-  //   // 1️⃣ extract your numeric user-id (if you still need it)
-  //   const parts = peerId.split('-');
-  //   const userId = parts[parts.length - 1];
-  //   console.log('Extracted userId:', userId);
-
-  //   // 2️⃣ look up the robot/ avatar‐id in your map
-  //   //    fallback to "1" if it’s missing
-  //   const peerInfo = robotPeers[peerId];
-  //   const avatarId = peerInfo?.robot;
-  //   console.log(`Using avatarId=${avatarId} for peer=${peerId}`);
-
-  //   // 3️⃣ find the matching GLB in your allRobots array using robotId
-  //   const avatarData = allRobots.find((robot) => robot.robotId.toString() === avatarId.toString());
-
-  //   // Add fallback if avatar not found
-  //   if (!avatarData) {
-  //     console.warn(`Robot with ID ${avatarId} not found in allRobots. Using default robot.`);
-  //   }
-
-  //   const barImgAsset = new pc.Asset(
-  //     'speakingBarImg',
-  //     'texture',
-  //     { url: 'public/unmuted.png' }, // <-- put your file here
-  //   );
-
-  //   app.assets.add(barImgAsset);
-  //   app.assets.load(barImgAsset);
-
-  //   const modelUrl = avatarData ? avatarData.robotGlbUrl : allRobots[0]?.robotGlbUrl;
-  //   // Create capsule parent
-  //   const capsule = new pc.Entity(`player-${peerId}`);
-  //   // capsule.addComponent('model', { type: 'capsule' });
-  //   capsule.addComponent('collision', {
-  //     type: 'capsule',
-  //     radius: 0.5,
-  //     height: 1,
-  //   });
-  //   capsule.addComponent('rigidbody', {
-  //     type: 'kinematic',
-  //     mass: 85,
-  //   });
-  //   capsule.setLocalPosition(0, 1, 0);
-  //   capsule.setLocalEulerAngles(0, 180, 0);
-
-  //   // Load font
-  //   let fontAsset = app.assets.find('Astera v2', 'font');
-  //   if (!fontAsset) {
-  //     fontAsset = new pc.Asset('Astera v2', 'font', {
-  //       url: '/fonts/Astera/ASTERA v2.json',
-  //     });
-  //     app.assets.add(fontAsset);
-  //     app.assets.load(fontAsset);
-  //   }
-
-  //   // Make capsule invisible
-  //   // const material = new pc.StandardMaterial();
-  //   // material.opacity = 0;
-  //   // material.blendType = pc.BLEND_NORMAL;
-  //   // material.update();
-  //   // capsule.model.meshInstances.forEach((mi) => {
-  //   //   mi.material = material;
-  //   // });
-
-  //   // Create a parent entity for the UI elements
-  //   const uiParent = new pc.Entity(`uiParent-${peerId}`);
-  //   capsule.addChild(uiParent);
-  //   uiParent.setLocalPosition(0, 1.5, 0); // Position above the capsule
-
-  //   // ------ FRONT FACING UI ------
-
-  //   // Create avatar image entity (front facing)
-  //   const avatarImageFront = new pc.Entity(`avatarImageFront-${peerId}`);
-  //   avatarImageFront.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.3,
-  //     height: 0.3,
-  //     opacity: 1,
-  //   });
-  //   avatarImageFront.setLocalPosition(-0.4, 1.05, 0);
-  //   capsule.addChild(avatarImageFront);
-
-  //   // Create nameplate background - front facing
-  //   const nameBgFront = new pc.Entity(`nameBgFront-${peerId}`);
-  //   nameBgFront.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.8,
-  //     height: 0.3,
-  //     color: new pc.Color(0.2, 0.2, 0.2, 0.9),
-  //     pivot: new pc.Vec2(0.5, 0.5),
-  //     opacity: 1,
-  //   });
-  //   nameBgFront.setLocalPosition(0.3, -0.3, 0);
-  //   uiParent.addChild(nameBgFront);
-
-  //   // Name text on top of the background - front facing
-  //   const nameTextFront = new pc.Entity(`nameTextFront-${peerId}`);
-  //   nameTextFront.addComponent('element', {
-  //     type: 'text',
-  //     text: 'Loading...',
-  //     fontSize: 0.3,
-  //     fontAsset: fontAsset,
-  //     color: new pc.Color(1, 1, 1),
-  //     pivot: new pc.Vec2(0.5, 0.5),
-  //     width: 1.2,
-  //     height: 0.3,
-  //   });
-  //   nameTextFront.setLocalPosition(0, 0, 0.01);
-  //   nameTextFront.setLocalScale(0.3, 0.3, 0.5);
-  //   nameBgFront.addChild(nameTextFront);
-
-  //   // ------ BACK FACING UI (rotated 180 degrees) ------
-
-  //   // Create a parent entity for the back-facing UI elements
-  //   const uiParentBack = new pc.Entity(`uiParentBack-${peerId}`);
-  //   capsule.addChild(uiParentBack);
-  //   uiParentBack.setLocalPosition(0, 1.5, 0);
-  //   uiParentBack.setLocalEulerAngles(0, 180, 0);
-
-  //   // Create avatar image entity (back facing)
-  //   const avatarImageBack = new pc.Entity(`avatarImageBack-${peerId}`);
-  //   avatarImageBack.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.3,
-  //     height: 0.3,
-  //     opacity: 1,
-  //   });
-  //   avatarImageBack.setLocalPosition(0.4, 1.05, 0);
-  //   avatarImageBack.setLocalEulerAngles(0, 180, 0);
-  //   capsule.addChild(avatarImageBack);
-
-  //   // Create nameplate background - back facing
-  //   const nameBgBack = new pc.Entity(`nameBgBack-${peerId}`);
-  //   nameBgBack.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.8,
-  //     height: 0.3,
-  //     color: new pc.Color(0.2, 0.2, 0.2, 0.9),
-  //     pivot: new pc.Vec2(0.5, 0.5),
-  //     opacity: 1,
-  //   });
-  //   nameBgBack.setLocalPosition(0.3, -0.3, 0);
-  //   uiParentBack.addChild(nameBgBack);
-
-  //   // Name text on top of the background - back facing
-  //   const nameTextBack = new pc.Entity(`nameTextBack-${peerId}`);
-  //   nameTextBack.addComponent('element', {
-  //     type: 'text',
-  //     text: 'Loading...',
-  //     fontSize: 0.3,
-  //     fontAsset: fontAsset,
-  //     color: new pc.Color(1, 1, 1),
-  //     pivot: new pc.Vec2(0.5, 0.5),
-  //     width: 1.2,
-  //     height: 0.3,
-  //   });
-  //   nameTextBack.setLocalPosition(0, 0, 0.01);
-  //   nameTextBack.setLocalScale(0.3, 0.3, 0.5);
-  //   nameBgBack.addChild(nameTextBack);
-
-  //   // Create a speaking indicator bar (a simple box or element)
-  //   const speakingBar = new pc.Entity(`speakingBar-${peerId}`);
-  //   speakingBar.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.2,
-  //     height: 0.2,
-  //     color: new pc.Color(0, 1, 0), // red color
-  //     opacity: 0, // start invisible
-  //   });
-
-  //   // Position the speaking bar slightly above the UI parent
-  //   speakingBar.setLocalPosition(0.6, 1.2, 0.05); // tweak Y position as needed
-  //   capsule.addChild(speakingBar);
-
-  //   const speakingBarfront = new pc.Entity(`speakingBar-${peerId}`);
-  //   speakingBarfront.addComponent('element', {
-  //     type: 'image',
-  //     width: 0.2,
-  //     height: 0.2,
-  //     color: new pc.Color(0, 1, 0), // red color
-  //     opacity: 0, // start invisible
-  //   });
-
-  //   // Position the speaking bar slightly above the UI parent
-  //   speakingBarfront.setLocalPosition(-0.6, 1.2, 0.05); // tweak Y position as needed
-  //   speakingBarfront.setLocalEulerAngles(0, 180, 0);
-  //   capsule.addChild(speakingBarfront);
-
-  //   barImgAsset.ready(() => {
-  //     // Each element gets the *same* texture asset
-  //     speakingBar.element.textureAsset = barImgAsset;
-  //     speakingBarfront.element.textureAsset = barImgAsset;
-  //   });
-
-  //   capsule.setSpeaking = (isSpeaking) => {
-  //     if (isSpeaking) {
-  //       // Make sure the video is visible
-  //       speakingBar.opacity = 1;
-  //       speakingBar.element.opacity = 1;
-  //       speakingBarfront.opacity = 1;
-  //       speakingBarfront.element.opacity = 1;
-
-  //       // No flicker effect, just keep the video playing
-  //     } else {
-  //       // Hide the video
-  //       speakingBar.element.opacity = 0;
-  //       speakingBarfront.element.opacity = 0;
-  //     }
-  //   };
-
-  //   //gdgsqhgdkqgdyuqgdyuqgduqwgu
-
-  //   // Physics settings
-  //   capsule.rigidbody.angularFactor = new pc.Vec3(0, 0, 0);
-  //   capsule.rigidbody.angularDamping = 1;
-  //   capsule.rigidbody.friction = 0.75;
-  //   capsule.rigidbody.restitution = 0.5;
-  //   capsule.rigidbody.linearDamping = 0.99;
-  //   capsule.rigidbody.linearFactor = new pc.Vec3(1, 1, 1);
-
-  //   app.root.addChild(capsule);
-
-  //   // Load robot model
-  //   const robotAsset = new pc.Asset(`${peerId}_robot`, 'container', {
-  //     url: modelUrl,
-  //   });
-
-  //   robotAsset.on('load', () => {
-  //     const container = robotAsset.resource;
-  //     const model = container.instantiateRenderEntity();
-  //     model.setLocalPosition(0, -0.9, 0);
-  //     model.setLocalEulerAngles(0, 180, 0);
-  //     capsule.addChild(model);
-  //   });
-
-  //   app.assets.add(robotAsset);
-  //   app.assets.load(robotAsset);
-
-  //   // Function to update player info
-  //   const updatePlayerInfo = async () => {
-  //     try {
-  //       // const userId = new URLSearchParams(window.location.search).get('userId');
-  //       if (!userId) return;
-
-  //       const response = await fetch(
-  //         `https://amjad-pod-backend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/api/users/single-user/${userId}`,
-  //       );
-  //       const data = await response.json();
-
-  //       // Update player name
-  //       const MAX_CHARS = 'Playerrrr'.length; // 9; tweak if you want a different cutoff
-  //       const ellipsize = (str, max = MAX_CHARS) =>
-  //         str.length > max ? str.slice(0, max) + '...' : str;
-
-  //       // inside updatePlayerInfo()
-  //       const rawName = data.userDisplayName || 'Player';
-  //       const displayName = ellipsize(rawName); // → trims & adds "..." automatically
-
-  //       nameTextFront.element.text = displayName;
-  //       nameTextBack.element.text = displayName;
-
-  //       // Update avatar image if available
-  //       if (data.userDPUrl) {
-  //         try {
-  //           // Use proxy server to fetch the image
-  //           const proxyUrl = `https://amjad-pod-backend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/api/pods/media?url=${encodeURIComponent(data.userDPUrl)}`;
-
-  //           // Use the blob approach from the older code, which works better with the proxy
-  //           const res = await fetch(proxyUrl);
-  //           const blob = await res.blob();
-  //           const blobUrl = URL.createObjectURL(blob);
-
-  //           const img = new Image();
-
-  //           img.onload = () => {
-  //             console.log(`Avatar image loaded successfully: ${img.width}x${img.height}`);
-
-  //             // Create texture for both front and back images
-  //             const tex = new pc.Texture(app.graphicsDevice);
-  //             tex.setSource(img);
-  //             tex.upload();
-
-  //             // Apply texture directly to elements
-  //             avatarImageFront.element.texture = tex;
-  //             avatarImageBack.element.texture = tex;
-
-  //             // Clean up blob URL when textures are loaded
-  //             URL.revokeObjectURL(blobUrl);
-
-  //             console.log('Applied texture to UI elements');
-  //           };
-
-  //           img.onerror = (err) => {
-  //             console.error('Failed to load avatar image:', err);
-  //             URL.revokeObjectURL(blobUrl);
-  //           };
-
-  //           // Start loading the image
-  //           img.src = blobUrl;
-  //         } catch (err) {
-  //           console.error('Error loading avatar image:', err);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to fetch user data:', error);
-  //     }
-  //   };
-
-  //   // Call the function to update player info
-  //   updatePlayerInfo();
-
-  //   // Add a function to update player name (accessible from outside)
-  //   capsule.setPlayerName = function (name) {
-  //     nameTextFront.element.text = name;
-  //     nameTextBack.element.text = name;
-  //   };
-
-  //   capsule.speakingBar = speakingBar;
-
-  //   return capsule;
-  // }
   function createRemotePlayer(app, peerId) {
     console.log('Whole Peer:', peerId);
 
@@ -718,7 +399,11 @@ const Pods = (children) => {
   const initializeGame = async () => {
     try {
       const canvas = document.getElementById('application-canvas');
-      if (!canvas) return;
+      if (!canvas) {
+        console.error('Canvas element not found');
+        setIsLoading(false);
+        return;
+      }
 
       const gfxOptions = {
         deviceTypes: [deviceType],
@@ -743,6 +428,7 @@ const Pods = (children) => {
       const device = await pc.createGraphicsDevice(canvas, gfxOptions);
       if (!device) {
         console.error('Failed to create WebGL device.');
+        setIsLoading(false);
         return;
       }
 
@@ -805,21 +491,39 @@ const Pods = (children) => {
       });
 
       newApp.start();
+      const trackAssetLoading = () => {
+        loadedAssets.current += 1;
+
+        if (loadedAssets.current >= totalAssetsToLoad) {
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 500); // Give a small delay before hiding
+        }
+      };
+
+      setTimeout(() => {
+        initialVram(newApp);
+      }, 1000);
 
       console.log('layers rendering order', newApp.scene.layers.layerList);
 
       // Configure scene
-      await setupScene(newApp);
+      await setupScene(newApp, trackAssetLoading, () => setIsLoading(false));
     } catch (error) {
       console.error('Error initializing game:', error);
+      setIsLoading(false);
     }
   };
 
-  const setupScene = async (app) => {
+  const setupScene = async (app, onAssetLoaded, onLoadingFailed) => {
     // MiniStats(pc, app);
     console.log('SKYBOX IS:', children.skyboxFile);
     SetSkyboxDds(app, children.skyboxFile);
     const cubemap = await SetCubeMapDds(app, children);
+    const timeout = setTimeout(() => {
+      console.warn('Asset loading timed out');
+      onLoadingFailed();
+    }, 60000);
 
     // Create a promise to handle store loading
     const storeLoadPromise = new Promise((resolve) => {
@@ -854,6 +558,7 @@ const Pods = (children) => {
         app.root.addChild(model);
 
         // Resolve the promise with the model, so it can be used later
+        onAssetLoaded();
         resolve(model);
       });
     });
@@ -955,6 +660,7 @@ const Pods = (children) => {
         app.root.addChild(model);
 
         // Resolve the promise with the model, so it can be used later
+        onAssetLoaded();
         resolve(model);
       });
     });
@@ -967,6 +673,8 @@ const Pods = (children) => {
       // Wait for the store to load
       const model = await storeLoadPromise;
       await store1LoadPromise;
+      onAssetLoaded();
+      clearTimeout(timeout);
 
       // Now that the store is fully loaded, create the player
       const { player, playerCamera } = FpsPlayer(app);
@@ -978,6 +686,7 @@ const Pods = (children) => {
   useEffect(() => {
     initializeGame().catch((error) => {
       console.error('Failed to initialize game:', error);
+      setIsLoading(false);
     });
 
     return () => {
@@ -1092,6 +801,7 @@ const Pods = (children) => {
   const [showPrompt, setShowPrompt] = useState(false);
   return (
     <>
+      <LoadingScreen isVisible={isLoading} onHide={() => setIsLoading(false)} />
       {/* <FullscreenToggle /> */}
       {!isMobileDevice() && (
         <>

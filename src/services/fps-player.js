@@ -42,6 +42,19 @@ export function FpsPlayer(app) {
   playerCamera.camera.toneMapping = pc.TONEMAP_ACES2;
   playerCamera.camera.gammaCorrection = pc.GAMMA_SRGB;
 
+  const camComp = playerCamera.camera;
+  const cameraFrame = new pc.CameraFrame(app, camComp);
+  // const cameraFrame = new pc.CameraFrame(app, camComp);
+
+  // Enable TAA
+  cameraFrame.taa.enabled = true;
+  // Optional: adjust jitter strength (higher = more pixel jitter)
+  cameraFrame.taa.jitter = 1;
+
+  // Optional: tweak sharpness (blurriness control)
+  cameraFrame.rendering.sharpness = 1;
+  cameraFrame.update();
+
   const player = new pc.Entity('Player');
 
   player.addComponent('model', { type: 'capsule' });
