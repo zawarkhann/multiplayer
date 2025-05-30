@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: multiplayer-events
+  name: multiplayertest
   namespace: tenant-7654b5-asrpods
   labels:
-    app: multiplayer-events
+    app: multiplayertest
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: multiplayer-events
+      app: multiplayertest
   template:
     metadata:
       labels:
-        app: multiplayer-events
+        app: multiplayertest
     spec:
       affinity:
         nodeAffinity:
@@ -25,8 +25,8 @@ spec:
                     values:
                       - intel-xeon-v3
       containers:
-        - name: multiplayer-events
-          image: exartadev/zeniva.exarta:multiplayer-events-v221-asrpods
+        - name: multiplayertest
+          image: exartadev/zeniva.exarta:multiplayer-events-v224-asrpods
           ports:
             - containerPort: 5173
           resources:
