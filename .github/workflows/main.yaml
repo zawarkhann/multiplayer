@@ -1,0 +1,70 @@
+name: CI-CD for multiplayertest
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set commit ID as an environment variable
+        run: echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t exartadev/zeniva.exarta:multiplayertest-v${COMMIT_COUNT}-asrpods .
+          docker push exartadev/zeniva.exarta:multiplayertest-v${COMMIT_COUNT}-asrpods
+
+      - name: Checkout deployment branch
+        uses: actions/checkout@v2
+        with:
+          ref: "main" # Specify the deployment branch
+          path: "deployment-files" # Set the path to store the checked out deployment branch files
+
+      - name: Read line client from file
+        run: |
+          result=$(grep "multiplayertest-v" deployment-files/deployment.yml)
+          echo "$result"
+
+      - name: Set commit ID as an environment variable
+        run: echo "COMMIT_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+
+
+      - name: Update Deployment Image with sed
+        run: |
+          sed -i 's|image: .*|image: exartadev/zeniva.exarta:multiplayertest-v${{ env.COMMIT_COUNT }}-asrpods|' deployment-files/deployment.yml
+
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: latest
+
+      - run: kubectl version --client
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: "${{secrets.KUBE_CONFIG}}"
+        with:
+          args: |
+            apply -f deployment-files/deployment.yml
+
+      - name: Commit and push changes
+        run: |
+          cd deployment-files
+          git config --global user.email "hamad@exarta.com"
+          git config --global user.name "Hamad"
+          git add deployment.yml
+          git commit -m "Update multiplayertest-v${COMMIT_COUNT} image tag to deployment.yml"
+          git push
