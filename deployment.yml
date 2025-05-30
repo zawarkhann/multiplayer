@@ -26,7 +26,7 @@ spec:
                       - intel-xeon-v3
       containers:
         - name: multiplayertest
-          image: exartadev/zeniva.exarta:multiplayer-events-v224-asrpods
+          image: exartadev/zeniva.exarta:multiplayertest-v224-asrpods
           ports:
             - containerPort: 5173
           resources:
