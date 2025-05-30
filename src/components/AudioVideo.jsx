@@ -114,7 +114,7 @@ export default function AudioVideo() {
       <div style={{ flex: '0 0 35%' }} />
 
       {/* 25 % – Join Now button sits after the 75 % mark */}
-      <footer className='flex items-center px-6' style={{ flex: '0 0 25%' }}>
+      <footer className='flex items-center px-6 ' style={{ flex: '0 0 10%' }}>
         <button
           onClick={handleJoin}
           className='w-full py-3 bg-[#8F5BFF] rounded-2xl text-base font-semibold'
