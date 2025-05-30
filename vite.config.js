@@ -21,7 +21,8 @@ export default defineConfig({
       'playcanvas.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud', // Allow the iframe's domain
       'amjad-pod-frontend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/',
       'multiplayer-events.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud',
-      'event.pods.social'
+      'event.pods.social',
+      'multiplayertest.pods.social'
     ],
   },
 });
