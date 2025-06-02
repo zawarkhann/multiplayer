@@ -86,6 +86,7 @@ const Pods = (children) => {
         console.log('No sound');
       } else {
         console.log('There is sound ');
+
         setSoundUrl(children.postAssets?.postAssets?.ambientSound.soundUrl);
         setmusic(true);
       }
@@ -500,10 +501,6 @@ const Pods = (children) => {
           }, 500); // Give a small delay before hiding
         }
       };
-
-      setTimeout(() => {
-        initialVram(newApp);
-      }, 1000);
 
       console.log('layers rendering order', newApp.scene.layers.layerList);
 

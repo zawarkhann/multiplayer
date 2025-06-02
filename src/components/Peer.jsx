@@ -228,7 +228,7 @@ export const PeerProvider = ({ children }) => {
   const [localVideoEnabled, setLocalVideoEnabled] = useState(initialParams.videoEnabled);
   const [localAudioEnabled, setLocalAudioEnabled] = useState(initialParams.audioEnabled);
   const VIDEO_CONSTRAINTS = {
-    width: { min: 320, max: 320, ideal: 320 },
+    width: { min: 320, max: 640, ideal: 320 },
     height: { min: 240, max: 240, ideal: 240 },
     frameRate: {
       ideal: 24,
@@ -242,6 +242,61 @@ export const PeerProvider = ({ children }) => {
       .getVideoTracks()
       .forEach((track) => track.applyConstraints(VIDEO_CONSTRAINTS).catch(console.warn));
   }
+
+  const logVideoStreamDetails = (stream, streamType = 'local') => {
+    const videoTracks = stream.getVideoTracks();
+
+    if (videoTracks.length === 0) {
+      console.log(`📹 ${streamType} stream: No video tracks found`);
+      return;
+    }
+
+    videoTracks.forEach((track, index) => {
+      const settings = track.getSettings();
+      const capabilities = track.getCapabilities();
+      const constraints = track.getConstraints();
+
+      console.log(`📹 ${streamType} Video Track ${index + 1}:`);
+      console.log('  Actual Settings:', {
+        width: settings.width,
+        height: settings.height,
+        frameRate: settings.frameRate,
+        aspectRatio: settings.aspectRatio,
+        facingMode: settings.facingMode,
+        deviceId: settings.deviceId,
+      });
+
+      console.log('  Applied Constraints:', constraints);
+
+      console.log('  Device Capabilities:', {
+        width: capabilities.width,
+        height: capabilities.height,
+        frameRate: capabilities.frameRate,
+        aspectRatio: capabilities.aspectRatio,
+      });
+
+      // Check if we got what we requested
+      const requestedWidth = VIDEO_CONSTRAINTS.width.ideal;
+      const requestedHeight = VIDEO_CONSTRAINTS.height.ideal;
+      const requestedFrameRate = VIDEO_CONSTRAINTS.frameRate.ideal;
+
+      if (settings.width !== requestedWidth || settings.height !== requestedHeight) {
+        console.warn(
+          `⚠️ Resolution mismatch! Requested: ${requestedWidth}x${requestedHeight}, Got: ${settings.width}x${settings.height}`,
+        );
+      } else {
+        console.log(`✅ Got requested resolution: ${settings.width}x${settings.height}`);
+      }
+
+      if (Math.abs(settings.frameRate - requestedFrameRate) > 1) {
+        console.warn(
+          `⚠️ Frame rate mismatch! Requested: ${requestedFrameRate}fps, Got: ${settings.frameRate}fps`,
+        );
+      } else {
+        console.log(`✅ Got requested frame rate: ${settings.frameRate}fps`);
+      }
+    });
+  };
 
   // Get local media stream with both audio and video
   const getLocalMediaStream = async (videoEnabled = null) => {
@@ -263,7 +318,8 @@ export const PeerProvider = ({ children }) => {
       });
 
       if (shouldEnableVideo) {
-        enforceVideoProfile(stream);
+        // enforceVideoProfile(stream);
+        logVideoStreamDetails(stream, 'Local');
       }
 
       localStream.current = stream;
@@ -672,6 +728,8 @@ export const PeerProvider = ({ children }) => {
       console.log('⚠️ Received media from non-validated peer, ignoring:', remotePeerId);
       return;
     }
+
+    logVideoStreamDetails(remoteStream, `Remote (${remotePeerId})`);
 
     // Process audio track if present
     const audioTracks = remoteStream.getAudioTracks();
@@ -1437,7 +1495,7 @@ export const PeerProvider = ({ children }) => {
       else {
         // Get a new stream with video
         const newStream = await getLocalMediaStream(true);
-        if (newStream) enforceVideoProfile(newStream);
+        // if (newStream) enforceVideoProfile(newStream);
 
         if (newStream) {
           // If we have existing audio tracks, add them to the new stream

@@ -7,6 +7,7 @@ export default function Music({ soundUrl, top = '8%' }) {
   const audioRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [audioLoaded, setAudioLoaded] = useState(false);
+  console.log('HELLO URL', soundUrl);
 
   useEffect(() => {
     const finalUrl = soundUrl === 'https://sound_url.com/' || !soundUrl ? fallbackUrl : soundUrl;
