@@ -228,12 +228,10 @@ export const PeerProvider = ({ children }) => {
   const [localVideoEnabled, setLocalVideoEnabled] = useState(initialParams.videoEnabled);
   const [localAudioEnabled, setLocalAudioEnabled] = useState(initialParams.audioEnabled);
   const VIDEO_CONSTRAINTS = {
-    width: { min: 320, max: 640, ideal: 320 },
-    height: { min: 240, max: 240, ideal: 240 },
+    width: { ideal: 320 },
+    height: { ideal: 240 },
     frameRate: {
       ideal: 24,
-      min: 24,
-      max: 24,
     }, // ideal keeps CPUs cooler; max is the hard cap
     aspectRatio: 1.333333334,
   };
@@ -729,7 +727,7 @@ export const PeerProvider = ({ children }) => {
       return;
     }
 
-    logVideoStreamDetails(remoteStream, `Remote (${remotePeerId})`);
+    // logVideoStreamDetails(remoteStream, `Remote (${remotePeerId})`);
 
     // Process audio track if present
     const audioTracks = remoteStream.getAudioTracks();
