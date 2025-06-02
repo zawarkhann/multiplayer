@@ -227,6 +227,16 @@ export const PeerProvider = ({ children }) => {
   const initialParams = getCurrentURLParams();
   const [localVideoEnabled, setLocalVideoEnabled] = useState(initialParams.videoEnabled);
   const [localAudioEnabled, setLocalAudioEnabled] = useState(initialParams.audioEnabled);
+  const VIDEO_CONSTRAINTS = {
+    width: { ideal: 320, max: 320 },
+    height: { ideal: 240, max: 240 },
+    frameRate: { ideal: 15, max: 17 }, // ideal keeps CPUs cooler; max is the hard cap
+  };
+  function enforceVideoProfile(stream) {
+    stream
+      .getVideoTracks()
+      .forEach((track) => track.applyConstraints(VIDEO_CONSTRAINTS).catch(console.warn));
+  }
 
   // Get local media stream with both audio and video
   const getLocalMediaStream = async (videoEnabled = null) => {
@@ -244,7 +254,7 @@ export const PeerProvider = ({ children }) => {
       // Request both audio and video, but make video optional
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
-        video: shouldEnableVideo,
+        video: shouldEnableVideo ? VIDEO_CONSTRAINTS : false,
       });
 
       localStream.current = stream;
@@ -1418,6 +1428,7 @@ export const PeerProvider = ({ children }) => {
       else {
         // Get a new stream with video
         const newStream = await getLocalMediaStream(true);
+        if (newStream) enforceVideoProfile(newStream);
 
         if (newStream) {
           // If we have existing audio tracks, add them to the new stream
