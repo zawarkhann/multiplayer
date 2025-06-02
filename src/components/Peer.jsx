@@ -227,19 +227,39 @@ export const PeerProvider = ({ children }) => {
   const initialParams = getCurrentURLParams();
   const [localVideoEnabled, setLocalVideoEnabled] = useState(initialParams.videoEnabled);
   const [localAudioEnabled, setLocalAudioEnabled] = useState(initialParams.audioEnabled);
+
+  // Fixed constraints that work across all devices
   const VIDEO_CONSTRAINTS = {
-    width: { ideal: 320 },
-    height: { ideal: 240 },
-    frameRate: {
-      ideal: 24,
-    }, // ideal keeps CPUs cooler; max is the hard cap
-    aspectRatio: 1.333333334,
+    width: { ideal: 320, max: 640 },
+    height: { ideal: 240, max: 480 },
+    frameRate: { ideal: 24, max: 30 },
+    aspectRatio: { ideal: 1.333333333 },
+    facingMode: { ideal: 'user' },
+    // Remove unsupported properties for better compatibility
   };
-  function enforceVideoProfile(stream) {
-    stream
-      .getVideoTracks()
-      .forEach((track) => track.applyConstraints(VIDEO_CONSTRAINTS).catch(console.warn));
-  }
+
+  // Detect if device is mobile
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    );
+  };
+
+  // Handle mobile orientation constraints
+  const getMobileAdjustedConstraints = () => {
+    if (!isMobileDevice()) {
+      return VIDEO_CONSTRAINTS;
+    }
+
+    // For mobile, be more flexible with dimensions due to orientation
+    return {
+      width: { ideal: 320, min: 240, max: 640 },
+      height: { ideal: 240, min: 180, max: 480 },
+      frameRate: { ideal: 24, max: 30 },
+      aspectRatio: { ideal: 1.333333333, min: 1.0, max: 2.0 },
+      facingMode: { ideal: 'user' },
+    };
+  };
 
   const logVideoStreamDetails = (stream, streamType = 'local') => {
     const videoTracks = stream.getVideoTracks();
@@ -271,35 +291,58 @@ export const PeerProvider = ({ children }) => {
         height: capabilities.height,
         frameRate: capabilities.frameRate,
         aspectRatio: capabilities.aspectRatio,
+        facingMode: capabilities.facingMode,
       });
 
-      // Check if we got what we requested
+      // Check orientation and constraints
+      const isLandscape = settings.width > settings.height;
       const requestedWidth = VIDEO_CONSTRAINTS.width.ideal;
       const requestedHeight = VIDEO_CONSTRAINTS.height.ideal;
-      const requestedFrameRate = VIDEO_CONSTRAINTS.frameRate.ideal;
 
-      if (settings.width !== requestedWidth || settings.height !== requestedHeight) {
-        console.warn(
-          `⚠️ Resolution mismatch! Requested: ${requestedWidth}x${requestedHeight}, Got: ${settings.width}x${settings.height}`,
-        );
+      console.log(
+        `📱 Device info: ${isMobileDevice() ? 'Mobile' : 'Desktop'}, Orientation: ${isLandscape ? 'Landscape' : 'Portrait'}`,
+      );
+
+      // For mobile, check if dimensions are swapped due to orientation
+      const gotRequestedSize =
+        (settings.width === requestedWidth && settings.height === requestedHeight) ||
+        (isMobileDevice() &&
+          settings.width === requestedHeight &&
+          settings.height === requestedWidth);
+
+      if (gotRequestedSize) {
+        console.log(`✅ Got compatible resolution: ${settings.width}x${settings.height}`);
       } else {
-        console.log(`✅ Got requested resolution: ${settings.width}x${settings.height}`);
+        console.warn(
+          `⚠️ Resolution difference! Requested: ${requestedWidth}x${requestedHeight}, Got: ${settings.width}x${settings.height}`,
+        );
+
+        // Check if it's just orientation swap on mobile
+        if (
+          isMobileDevice() &&
+          settings.width === requestedHeight &&
+          settings.height === requestedWidth
+        ) {
+          console.log(
+            `📱 Note: Dimensions appear swapped due to mobile orientation - this is normal`,
+          );
+        }
       }
 
-      if (Math.abs(settings.frameRate - requestedFrameRate) > 1) {
+      const requestedFrameRate = VIDEO_CONSTRAINTS.frameRate.ideal;
+      if (Math.abs(settings.frameRate - requestedFrameRate) > 2) {
         console.warn(
-          `⚠️ Frame rate mismatch! Requested: ${requestedFrameRate}fps, Got: ${settings.frameRate}fps`,
+          `⚠️ Frame rate difference! Requested: ${requestedFrameRate}fps, Got: ${settings.frameRate}fps`,
         );
       } else {
-        console.log(`✅ Got requested frame rate: ${settings.frameRate}fps`);
+        console.log(`✅ Got acceptable frame rate: ${settings.frameRate}fps`);
       }
     });
   };
 
-  // Get local media stream with both audio and video
+  // Enhanced getLocalMediaStream with better mobile support
   const getLocalMediaStream = async (videoEnabled = null) => {
     try {
-      // If videoEnabled is not provided, get it from current URL
       const currentParams = getCurrentURLParams();
       const shouldEnableVideo = videoEnabled !== null ? videoEnabled : currentParams.videoEnabled;
       const shouldEnableAudio = currentParams.audioEnabled;
@@ -307,25 +350,28 @@ export const PeerProvider = ({ children }) => {
       console.log('Getting media stream with:', {
         video: shouldEnableVideo,
         audio: shouldEnableAudio,
+        device: isMobileDevice() ? 'mobile' : 'desktop',
       });
 
-      // Request both audio and video, but make video optional
+      // Use mobile-adjusted constraints
+      const constraints = getMobileAdjustedConstraints();
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: shouldEnableAudio,
-        video: shouldEnableVideo ? VIDEO_CONSTRAINTS : false,
+        video: shouldEnableVideo ? constraints : false,
       });
 
+      // Log details immediately after getting stream
       if (shouldEnableVideo) {
-        // enforceVideoProfile(stream);
         logVideoStreamDetails(stream, 'Local');
       }
 
-      localStream.current = stream;
+      // DON'T apply constraints again - they're already applied during getUserMedia
+      // Removing this line: stream.getVideoTracks()[0].applyConstraints({ width: 320, height: 240 }).catch(console.warn);
 
-      // Update local video state
+      localStream.current = stream;
       setLocalVideoEnabled(shouldEnableVideo);
 
-      // Apply current audio state from URL
       stream.getAudioTracks().forEach((track) => {
         track.enabled = shouldEnableAudio;
       });
@@ -335,29 +381,61 @@ export const PeerProvider = ({ children }) => {
     } catch (err) {
       console.error('Failed to get media access:', err);
 
-      // If video fails, try with audio only
+      // Enhanced fallback strategy
       const currentParams = getCurrentURLParams();
       const shouldEnableAudio = currentParams.audioEnabled;
 
       if (videoEnabled !== false) {
+        // Try with more relaxed video constraints first
         try {
-          const audioOnlyStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: false,
-          });
-          localStream.current = audioOnlyStream;
-          setLocalVideoEnabled(false);
+          console.log('🔄 Trying fallback with relaxed video constraints...');
+          const relaxedConstraints = {
+            width: { ideal: 320 },
+            height: { ideal: 240 },
+            frameRate: { ideal: 15 }, // Lower frame rate
+          };
 
-          // Apply current audio state from URL
-          audioOnlyStream.getAudioTracks().forEach((track) => {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({
+            audio: shouldEnableAudio,
+            video: relaxedConstraints,
+          });
+
+          console.log('✅ Fallback video stream successful');
+          logVideoStreamDetails(fallbackStream, 'Local (Fallback)');
+
+          localStream.current = fallbackStream;
+          setLocalVideoEnabled(true);
+
+          fallbackStream.getAudioTracks().forEach((track) => {
             track.enabled = shouldEnableAudio;
           });
           setLocalAudioEnabled(shouldEnableAudio);
 
-          return audioOnlyStream;
-        } catch (audioErr) {
-          console.error('Failed to get audio-only access:', audioErr);
-          return null;
+          return fallbackStream;
+        } catch (fallbackErr) {
+          console.log('🔄 Video fallback failed, trying audio-only...');
+
+          // Final fallback: audio only
+          try {
+            const audioOnlyStream = await navigator.mediaDevices.getUserMedia({
+              audio: shouldEnableAudio,
+              video: false,
+            });
+
+            console.log('✅ Audio-only stream successful');
+            localStream.current = audioOnlyStream;
+            setLocalVideoEnabled(false);
+
+            audioOnlyStream.getAudioTracks().forEach((track) => {
+              track.enabled = shouldEnableAudio;
+            });
+            setLocalAudioEnabled(shouldEnableAudio);
+
+            return audioOnlyStream;
+          } catch (audioErr) {
+            console.error('❌ All media access failed:', audioErr);
+            return null;
+          }
         }
       }
       return null;
