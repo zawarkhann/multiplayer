@@ -228,9 +228,14 @@ export const PeerProvider = ({ children }) => {
   const [localVideoEnabled, setLocalVideoEnabled] = useState(initialParams.videoEnabled);
   const [localAudioEnabled, setLocalAudioEnabled] = useState(initialParams.audioEnabled);
   const VIDEO_CONSTRAINTS = {
-    width: { ideal: 320, max: 320 },
-    height: { ideal: 240, max: 240 },
-    frameRate: { ideal: 15, max: 17 }, // ideal keeps CPUs cooler; max is the hard cap
+    width: { min: 320, max: 320, ideal: 320 },
+    height: { min: 240, max: 240, ideal: 240 },
+    frameRate: {
+      ideal: 24,
+      min: 24,
+      max: 24,
+    }, // ideal keeps CPUs cooler; max is the hard cap
+    aspectRatio: 1.333333334,
   };
   function enforceVideoProfile(stream) {
     stream
@@ -253,9 +258,13 @@ export const PeerProvider = ({ children }) => {
 
       // Request both audio and video, but make video optional
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: shouldEnableAudio,
         video: shouldEnableVideo ? VIDEO_CONSTRAINTS : false,
       });
+
+      if (shouldEnableVideo) {
+        enforceVideoProfile(stream);
+      }
 
       localStream.current = stream;
 
