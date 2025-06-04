@@ -661,9 +661,9 @@ export const PeerProvider = ({ children }) => {
         secure: true,
         config: {
           iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:207.53.234.73:3478' },
             {
-              urls: 'turn:207.53.234.73:80',
+              urls: 'turn:207.53.234.73:3478',
               username: 'Coturn',
               credential: 'Exarta@coturn',
             },
