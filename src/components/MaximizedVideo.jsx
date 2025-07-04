@@ -201,7 +201,7 @@ const MaximizedVideo = () => {
         <div className='absolute bottom-2 left-2 flex items-center gap-2'>
           {(isAudioMuted || !isAudioEnabled) && (
             <div className='bg-red-500/70 px-2 py-1 rounded-lg text-white text-xs flex items-center gap-1'>
-              <img src='public/AudioOff.svg' className='w-3 h-3' alt='Muted' />
+              <img src='/AudioOff.svg' className='w-3 h-3' alt='Muted' />
               <span>Muted</span>
             </div>
           )}
@@ -226,7 +226,7 @@ const MaximizedVideo = () => {
             className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
             onClick={handleMinimizeVideo}
           >
-            <img src='/public/maximize.svg' className='w-4 h-4' alt='Minimize' />
+            <img src='/maximize.svg' className='w-4 h-4' alt='Minimize' />
             <span>Minimize Video</span>
           </div>
 
@@ -237,7 +237,7 @@ const MaximizedVideo = () => {
             onClick={handleMuteToggle}
           >
             <img
-              src={isAudioMuted || !isAudioEnabled ? 'public/AudioOn.svg' : 'public/AudioOff.svg'}
+              src={isAudioMuted || !isAudioEnabled ? '/AudioOn.svg' : '/AudioOff.svg'}
               className='w-4 h-4'
               alt={isAudioMuted || !isAudioEnabled ? 'Unmute' : 'Mute'}
             />
@@ -251,7 +251,7 @@ const MaximizedVideo = () => {
                 className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
                 onClick={() => kickOutPeer(maximizedPeerId)}
               >
-                <img src='/public/kickout.svg' className='w-4 h-4' alt='Kick' />
+                <img src='/kickout.svg' className='w-4 h-4' alt='Kick' />
                 <span>Kick out</span>
               </div>
             </>

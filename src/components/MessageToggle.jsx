@@ -134,7 +134,7 @@ const MessageToggle = ({ onClose }) => {
           />
           <img
             onClick={handleSend}
-            src='public/Send.svg'
+            src='/Send.svg'
             disabled={!isConnected}
             className='h-6 w-6 mb-1'
           />

@@ -193,7 +193,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
               setSelectedUser(null); // Close any open menus when hiding the sidebar
             }}
           >
-            <img src='public/arrow.svg' style={{ transform: 'rotate(90deg)' }} alt='Hide' />
+            <img src='/arrow.svg' style={{ transform: 'rotate(90deg)' }} alt='Hide' />
           </div>
         )}
         {allPeers.map((id, index) => {
@@ -270,7 +270,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                     {/* Show audio status indicator based on both muted and enabled states */}
                     {(isAudioMuted || !isAudioEnabled) && (
                       <div className='absolute bottom-0 right-0 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center'>
-                        <img src='public/AudioOff.svg' className='w-3 h-3' alt='Muted' />
+                        <img src='/AudioOff.svg' className='w-3 h-3' alt='Muted' />
                       </div>
                     )}
                   </>
@@ -301,7 +301,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                         className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
                         onClick={(e) => handleMinimizeVideoFromChat(id, e)}
                       >
-                        <img src='/public/maximize.svg' className='w-4 h-4' alt='Minimize' />
+                        <img src='/maximize.svg' className='w-4 h-4' alt='Minimize' />
                         <span>Minimize Video</span>
                       </div>
                     </>
@@ -313,7 +313,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                         className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
                         onClick={(e) => handleMaximizeVideo(id, e)}
                       >
-                        <img src='/public/maximize.svg' className='w-4 h-4' alt='Maximize' />
+                        <img src='/maximize.svg' className='w-4 h-4' alt='Maximize' />
                         <span>Maximize Video</span>
                       </div>
                     </>
@@ -326,8 +326,8 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                     <img
                       src={
                         isAudioMuted || !isAudioEnabled
-                          ? 'public/AudioOn.svg'
-                          : 'public/AudioOff.svg'
+                          ? '/AudioOn.svg'
+                          : '/AudioOff.svg'
                       }
                       className='w-4 h-4'
                       alt={isAudioMuted || !isAudioEnabled ? 'Unmute' : 'Mute'}
@@ -357,7 +357,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                       className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
                       onClick={(e) => handleMinimizeVideoFromChat(id, e)}
                     >
-                      <img src='/public/maximize.svg' className='w-4 h-4' alt='Minimize' />
+                      <img src='/maximize.svg' className='w-4 h-4' alt='Minimize' />
                       <span>Minimize Video</span>
                     </div>
                   ) : (
@@ -366,7 +366,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                       className='p-2 flex items-center gap-2 cursor-pointer hover:bg-white/10 text-white'
                       onClick={(e) => handleMaximizeVideo(id, e)}
                     >
-                      <img src='/public/maximize.svg' className='w-4 h-4' alt='Maximize' />
+                      <img src='/maximize.svg' className='w-4 h-4' alt='Maximize' />
                       <span>Maximize Video</span>
                     </div>
                   )}
@@ -376,7 +376,7 @@ const VideoChat = ({ show, setShow, hostMuted }) => {
                     onClick={(e) => handleLocalMuteToggle(e)}
                   >
                     <img
-                      src={!localAudioEnabled ? 'public/AudioOn.svg' : 'public/AudioOff.svg'}
+                      src={!localAudioEnabled ? '/AudioOn.svg' : '/AudioOff.svg'}
                       className='w-4 h-4'
                       alt={!localAudioEnabled ? 'Unmute' : 'Mute'}
                     />

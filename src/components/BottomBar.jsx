@@ -86,7 +86,7 @@ const BottomControlBar = ({ activeUsers = 1, onOpenChat }) => {
             WebkitBackdropFilter: 'blur(50px)',
           }}
         >
-          <img src='public/arrow.svg' style={{ transform: 'rotate(-90deg)' }} />
+          <img src='/arrow.svg' style={{ transform: 'rotate(-90deg)' }} />
         </div>
       )}
 
@@ -104,7 +104,7 @@ const BottomControlBar = ({ activeUsers = 1, onOpenChat }) => {
         {/* Microphone Button */}
         <div className='text-center text-white cursor-pointer' onClick={toggleMicrophone}>
           <img
-            src={localAudioEnabled ? 'public/AudioOff.svg' : 'public/AudioOn.svg'}
+            src={localAudioEnabled ? '/AudioOff.svg' : '/AudioOn.svg'}
             alt={localAudioEnabled ? 'Unmute' : 'Muted'}
             className='w-5 h-5 mx-auto'
           />
@@ -112,7 +112,7 @@ const BottomControlBar = ({ activeUsers = 1, onOpenChat }) => {
         </div>
         <div className='text-center text-white cursor-pointer' onClick={() => toggleLocalVideo()}>
           <img
-            src={localVideoEnabled ? 'public/videoon.svg' : 'public/videooff.svg'}
+            src={localVideoEnabled ? '/videoon.svg' : '/videooff.svg'}
             className='w-5 h-5 mx-auto'
           />
           <div className='text-xs mt-1'>Video</div>

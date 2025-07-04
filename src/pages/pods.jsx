@@ -118,7 +118,7 @@ const Pods = (children) => {
       console.warn(`Robot with ID ${avatarId} not found in allRobots. Using default robot.`);
     }
 
-    const barImgAsset = new pc.Asset('speakingBarImg', 'texture', { url: 'public/unmuted.png' });
+    const barImgAsset = new pc.Asset('speakingBarImg', 'texture', { url: '/unmuted.png' });
 
     app.assets.add(barImgAsset);
     app.assets.load(barImgAsset);
@@ -345,7 +345,7 @@ const Pods = (children) => {
   const deviceType = pc.DEVICETYPE_WEBGL2;
 
   const store = new pc.Asset('Pod', 'container', {
-    url: 'public/models/Base_Cube.glb', // any name you like
+    url: '/models/Base_Cube.glb', // any name you like
   });
 
   const store1 = new pc.Asset('Pod1', 'container', {

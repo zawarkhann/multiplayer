@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import loadingGif from '/public/images/pods logo animaton (1).gif'; // put the file in src/images
+import loadingGif from '/images/pods logo animaton (1).gif'; // put the file in src/images
 
 export default function LoadingScreen({ isVisible, onHide }) {
   useEffect(() => {
