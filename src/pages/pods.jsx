@@ -124,6 +124,7 @@ const Pods = (children) => {
     app.assets.load(barImgAsset);
 
     const modelUrl = avatarData ? avatarData.robotGlbUrl : allRobots[0]?.robotGlbUrl;
+    console.log("ROBNOT",modelUrl)
 
     // Create capsule parent
     const capsule = new pc.Entity(`player-${peerId}`);
@@ -312,51 +313,7 @@ const Pods = (children) => {
     app.assets.add(robotAsset);
     app.assets.load(robotAsset);
 
-    // Function to load avatar image using a proxy
-    const loadAvatarImage = async () => {
-      try {
-        // Get the avatar URL from robotPeers (should be set in PeerProvider)
-        const avatarUrl = `https://api.dicebear.com/6.x/fun-emoji/svg?seed=${userId}`;
 
-        // Use a proxy server to fetch the image
-        const proxyUrl = `https://amjad-pod-backend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/api/pods/media?url=${encodeURIComponent(avatarUrl)}`;
-
-        const res = await fetch(proxyUrl);
-        const blob = await res.blob();
-        const blobUrl = URL.createObjectURL(blob);
-
-        const img = new Image();
-        img.crossOrigin = 'Anonymous'; // Important for CORS
-
-        img.onload = () => {
-          console.log(`Avatar image loaded successfully: ${img.width}x${img.height}`);
-
-          // Create texture for both front and back images
-          const tex = new pc.Texture(app.graphicsDevice);
-          tex.setSource(img);
-          tex.upload();
-
-          // Apply texture directly to elements
-          avatarImageFront.element.texture = tex;
-          avatarImageBack.element.texture = tex;
-
-          // Clean up blob URL when textures are loaded
-          URL.revokeObjectURL(blobUrl);
-        };
-
-        img.onerror = (err) => {
-          console.error('Failed to load avatar image:', err);
-          URL.revokeObjectURL(blobUrl);
-        };
-
-        img.src = blobUrl;
-      } catch (err) {
-        console.error('Error loading avatar image:', err);
-      }
-    };
-
-    // Load the avatar image
-    loadAvatarImage();
 
     // Add a function to update player name (accessible from outside)
     capsule.setPlayerName = function (name) {
@@ -392,7 +349,7 @@ const Pods = (children) => {
   });
 
   const store1 = new pc.Asset('Pod1', 'container', {
-    url: children.podData.podSettingsGlobal.podGlbUrl, // any name you like
+    url: 'https://object.ord1.coreweave.com/pods-bucket/pods/ArabesqueCourtyard101/model.glb', // any name you like
     // url: 'public/models/model.glb', // any name you like
   });
   //////
@@ -537,7 +494,7 @@ const Pods = (children) => {
 
         const renders = model.findComponents('render');
 
-        if (children.postAssets.postAssets) AddButtonToEditablesPost(app, model);
+        // if (children.postAssets.postAssets) AddButtonToEditablesPost(app, model);
 
         model.findComponents('render').forEach((render) => {
           const entity = render.entity;

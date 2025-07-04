@@ -11,18 +11,10 @@ export default defineConfig({
     strictPort: true,
     // https: true,
     headers: {
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-      'Cross-Origin-Opener-Policy': 'same-origin',
+      
       'Cross-Origin-Embedder-Policy': 'cross-origin',
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     },
-    allowedHosts: [
-      'localhost',
-      'playcanvas.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud', // Allow the iframe's domain
-      'amjad-pod-frontend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/',
-      'multiplayer-events.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud',
-      'event.pods.social',
-      'multiplayertest.pods.social'
-    ],
+  
   },
 });

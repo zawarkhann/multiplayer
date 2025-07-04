@@ -14,6 +14,54 @@ import AudioVideo from './components/AudioVideo';
 import PortraitLock from './components/LandScapeLock';
 import Alreadyjoined from './components/AlreadyJoined';
 
+// Hardcoded pod data
+const HARDCODED_POD_DATA = {
+  "podId": 4519,
+  "podName": "ArabesqueCourtyard101",
+  "podDescription": "ArabesqueCourtyard101 Pod",
+  "podDisplayImage": "https://object.ord1.coreweave.com/pods-bucket/pods/ArabesqueCourtyard101/render.jpg",
+  "podTags": [
+    "tag1",
+    "tag2",
+    "tag3"
+  ],
+  "podSettingsGlobal": {
+    "podGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/pods/ArabesqueCourtyard101/model.glb",
+    "skyboxUrl": "https://object.ord1.coreweave.com/pods-bucket/pods/ArabesqueCourtyard101/skybox.dds",
+    "floorCubemapUrl": "https://object.ord1.coreweave.com/pods-bucket/pods/ArabesqueCourtyard101/cubemap.dds",
+    "defaultCameraSettingsSimple": {
+      "fov": 75,
+      "nearClip": 0.1,
+      "farClip": 1000,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "defaultCameraSettingsFps": {
+      "fov": 75,
+      "nearClip": 0.1,
+      "farClip": 1000,
+      "position": {
+        "x": 0,
+        "y": 0.8,
+        "z": -0.5
+      },
+      "rotation": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      }
+    }
+  }
+};
+
 function AppRouter() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -41,44 +89,28 @@ function AppRouter() {
     }
   }, [userId, navigate, searchParams, isHomeRoute]);
 
-  // Step 2: Load pod data (only for home route)
+  // Step 2: Set hardcoded pod data (only for home route)
   useEffect(() => {
     if (!isHomeRoute) return;
 
-    const eventId = 21692442212;
-    const postId = 667274596;
+   
     userId = searchParams.get('userId');
 
     if (!userId) return;
 
-    window.eventId = eventId;
-    window.postId = postId;
+    
     window.userId = userId;
 
-    const fetchData = async () => {
-      try {
-        const postRes = await fetch(`${import.meta.env.VITE_LINK}/api/posts/${postId}`);
-        const postData = await postRes.json();
-
-        const podRes = await fetch(`${import.meta.env.VITE_LINK}/api/pods/${postData.podId}`);
-        const podData = await podRes.json();
-
-        setPodsProps({
-          podData,
-          glbFile: podData.podSettingsGlobal.podGlbUrl,
-          skyboxFile: podData.podSettingsGlobal.skyboxUrl,
-          postAssets: postData,
-          Ids: postData,
-          isPost: true,
-          editMode: false,
-          isHost: false,
-        });
-      } catch (error) {
-        console.error('Error fetching pod data:', error);
-      }
-    };
-
-    fetchData();
+    // Use hardcoded pod data instead of fetching
+    setPodsProps({
+      podData: HARDCODED_POD_DATA,
+      glbFile: HARDCODED_POD_DATA.podSettingsGlobal.podGlbUrl,
+      skyboxFile: HARDCODED_POD_DATA.podSettingsGlobal.skyboxUrl,
+    
+      isPost: false,
+      editMode: false,
+      isHost: false,
+    });
   }, [location.search, isHomeRoute]);
 
   // Only block rendering if we're on home route and don't have props yet

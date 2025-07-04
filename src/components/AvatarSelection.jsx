@@ -1,114 +1,81 @@
-// import React, { useState, useEffect } from 'react';
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import './avatar-scrollbar.css';
+// Hardcoded robot data
+const HARDCODED_ROBOTS_DATA = {
+  documents: [
+    {
+      "id": "robot:9154",
+      "value": {
+        "robotId": 9154,
+        "robotName": "Angry",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/Angry/Angry.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/Angry/Angry.png"
+      }
+    },
+    {
+      "id": "robot:9155",
+      "value": {
+        "robotId": 9155,
+        "robotName": "ArcadeTokens",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArcadeTokens/ArcadeTokens.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArcadeTokens/ArcadeTokens.png"
+      }
+    },
+    {
+      "id": "robot:9156",
+      "value": {
+        "robotId": 9156,
+        "robotName": "ArcaneSpark",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArcaneSpark/ArcaneSpark.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArcaneSpark/ArcaneSpark.png"
+      }
+    },
+    {
+      "id": "robot:9157",
+      "value": {
+        "robotId": 9157,
+        "robotName": "ArtyAna",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArtyAna/ArtyAna.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/ArtyAna/ArtyAna.png"
+      }
+    },
+    {
+      "id": "robot:9158",
+      "value": {
+        "robotId": 9158,
+        "robotName": "BalloonBeasts",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BalloonBeasts/BalloonBeasts.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BalloonBeasts/BalloonBeasts.png"
+      }
+    },
+    {
+      "id": "robot:9159",
+      "value": {
+        "robotId": 9159,
+        "robotName": "BioluminescentPlantPods",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BioluminescentPlantPods/BioluminescentPlantPods.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BioluminescentPlantPods/BioluminescentPlantPods.png"
+      }
+    },
+    {
+      "id": "robot:9160",
+      "value": {
+        "robotId": 9160,
+        "robotName": "BlobCritters",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BlobCritters/BlobCritters.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/BlobCritters/BlobCritters.png"
+      }
+    },
+    {
+      "id": "robot:9161",
+      "value": {
+        "robotId": 9161,
+        "robotName": "Bobaloo",
+        "robotGlbUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/Bobaloo/Bobaloo.glb",
+        "robotImageUrl": "https://object.ord1.coreweave.com/pods-bucket/robot/Bobaloo/Bobaloo.png"
+      }
+    }
+  ]
+};
 
-// /**
-//  * NOTE – put every *.png (thumb) and *.glb (model) pair in /public/avatars
-//  * using the same basename, e.g. robot_orange.png robot_orange.glb
-//  */
-// export const avatars = [
-//   { name: '1', img: '/avatars/1.png', glb: '/avatars/1.glb' },
-//   { name: '2', img: '/avatars/2.png', glb: '/avatars/2.glb' },
-//   { name: '5', img: '/avatars/5.png', glb: '/avatars/5.glb' },
-//   { name: '6', img: '/avatars/6.png', glb: '/avatars/6.glb' },
-// ];
-
-// const AvatarSelection = () => {
-//   const [selected, setSelected] = useState(avatars[0]);
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   // Load the avatar from URL params if available
-//   useEffect(() => {
-//     const avatarParam = new URLSearchParams(location.search).get('avatar');
-//     if (avatarParam) {
-//       const found = avatars.find((a) => a.name === avatarParam);
-//       if (found) setSelected(found);
-//     }
-//   }, [location.search]);
-
-//   const handleSave = () => {
-//     // Clone the existing query parameters
-//     const params = new URLSearchParams(location.search);
-//     // Add or update the avatar parameter
-//     params.set('avatar', selected.name);
-
-//     // Add default audio and video parameters (both enabled by default)
-//     params.set('audio', 'disabled');
-//     params.set('video', 'disabled');
-
-//     // Navigate to the AudioVideo page while preserving all query parameters
-//     navigate(`/audio-video?${params.toString()}`);
-//   };
-
-//   const handleBack = () => {
-//     window.parent.postMessage(
-//       {
-//         type: 'REDIRECT_AMJAD_APP',
-//         message: 'eventEnded',
-//       },
-//       '*',
-//     );
-//     console.log('MEssage sent');
-//   };
-
-//   return (
-//     <div className='relative h-screen w-screen bg-[#191B1A] flex flex-col'>
-//       {/* Header - 10% of screen height */}
-//       <div className='h-[10%] flex items-center px-3 text-white space-x-2'>
-//         <button
-//           onClick={handleBack}
-//           className='flex items-center justify-center p-2 rounded-full bg-[#2D2E2E] hover:bg-[#404241] transition-colors'
-//         >
-//           <img src='/back.png' alt='back' className='w-4 h-4' />
-//         </button>
-//         <span className='text-lg font-medium'>Select your Avatar</span>
-//       </div>
-
-//       {/* Preview - 40% of screen height */}
-//       <div className='h-[30%] mx-auto w-[90%] rounded-xl bg-[#2D2E2E] flex items-center justify-center'>
-//         <img src={selected.img} alt={selected.name} className='h-[90%] object-contain' />
-//       </div>
-
-//       {/* Grid - 30% of screen height with custom scrollbar */}
-//       <div className='h-[30%] px-[4%] mt-[5%] overflow-hidden'>
-//         <div
-//           className='h-full p-1 overflow-y-auto scrollbar-custom'
-//           style={{
-//             scrollbarWidth: 'thin',
-//             scrollbarColor: '#9356FF #2D2E2E',
-//           }}
-//         >
-//           <div className='grid grid-cols-3 gap-2 pb-4'>
-//             {avatars.map((av) => (
-//               <button
-//                 key={av.name}
-//                 onClick={() => setSelected(av)}
-//                 className={`rounded-xl p-1 bg-[#2D2E2E] ${
-//                   av.name === selected.name ? 'ring-1 ring-[#9356FF]' : ''
-//                 }`}
-//               >
-//                 <img src={av.img} alt={av.name} className='object-contain w-full h-full' />
-//               </button>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* CTA - 20% of screen height */}
-//       <div className='h-[20%] p-4 flex items-center'>
-//         <button
-//           onClick={handleSave}
-//           className='w-full py-3 rounded-2xl bg-[#B583FF] text-white text-base font-semibold'
-//         >
-//           Save &amp; Continue
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AvatarSelection;
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './avatar-scrollbar.css';
@@ -120,17 +87,16 @@ const AvatarSelection = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch robots from API
+  // Load hardcoded robot data instead of fetching from API
   useEffect(() => {
-    const fetchRobots = async () => {
+    const loadRobots = () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          'https://amjad-pod-backend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/api/pods/robots',
-        );
-        const data = await response.json();
+        
+        // Use the hardcoded data directly
+        const data = HARDCODED_ROBOTS_DATA;
 
-        // Transform the API data to match our avatar structure
+        // Transform the data to match our avatar structure
         const transformedRobots = data.documents.map((doc) => ({
           id: doc.value.robotId,
           name: doc.value.robotName,
@@ -145,15 +111,14 @@ const AvatarSelection = () => {
           setSelected(transformedRobots[0]);
         }
       } catch (error) {
-        console.error('Failed to fetch robots:', error);
-        // Fallback to empty array if API fails
+        console.error('Failed to load robots:', error);
         setRobots([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRobots();
+    loadRobots();
   }, []);
 
   // Load the avatar from URL params if available
@@ -182,14 +147,7 @@ const AvatarSelection = () => {
   };
 
   const handleBack = () => {
-    window.parent.postMessage(
-      {
-        type: 'REDIRECT_AMJAD_APP',
-        message: 'eventEnded',
-      },
-      '*',
-    );
-    console.log('Message sent');
+   
   };
 
   if (loading) {
@@ -289,10 +247,8 @@ export let avatars = [];
 // Function to get avatars (robots) - can be called from other components
 export const getAvatars = async () => {
   try {
-    const response = await fetch(
-      'https://amjad-pod-backend.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/api/pods/robots',
-    );
-    const data = await response.json();
+    // Use hardcoded data instead of API call
+    const data = HARDCODED_ROBOTS_DATA;
 
     const transformedRobots = data.documents.map((doc) => ({
       name: doc.value.robotId.toString(), // Use robotId as name for compatibility
@@ -305,7 +261,7 @@ export const getAvatars = async () => {
     avatars = transformedRobots;
     return transformedRobots;
   } catch (error) {
-    console.error('Failed to fetch robots:', error);
+    console.error('Failed to load hardcoded robots:', error);
     return [];
   }
 };

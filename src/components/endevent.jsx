@@ -1,64 +1,22 @@
 import React, { useEffect } from 'react';
 
-export async function updateEventStatus(status = 'finished') {
-  const searchParams = new URLSearchParams(window.location.search);
-  const hostId = searchParams.get('hostId');
-  const eventId = searchParams.get('eventId');
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_LINK}/api/users/update-event-status/${hostId}/${eventId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ eventStatus: status }),
-      },
-    );
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.error('❌ Failed to update event status:', errorData);
-      return { success: false, error: errorData };
-    }
-
-    const data = await res.json();
-    console.log('✅ Event status updated successfully:', data);
-    return { success: true, data };
-  } catch (err) {
-    console.error('❌ Error in updateEventStatus:', err);
-    return { success: false, error: err.message };
-  }
-}
 
 export const handleFinishEvent = async () => {
-  const result = await updateEventStatus();
-  if (result.success) {
-    console.log('Event finished!');
-  } else {
-    console.warn('Failed to finish event.');
-  }
+  console.log("Event finished");
+  
+  // Redirect to Google immediately when event is finished
+  window.location.href = 'https://google.com/';
 };
 
 const EndEventPrompt = ({ isOpen, isHost, onCancel }) => {
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (isHost) {
-      handleFinishEvent();
-    } else {
-      console.log('user cant finish event');
-    }
-
-    window.parent.postMessage(
-      {
-        type: 'REDIRECT_AMJAD_APP',
-        message: 'eventEnded',
-      },
-      '*',
-    );
-    window.location.href =
-      'https://pods-alpha-test.tenant-7654b5-asrpods.ord1.ingress.coreweave.cloud/';
+    // Any user can finish the event and redirect
+    handleFinishEvent();
+    
+    
   };
   useEffect(() => {
     window.hideJoystick = true;
